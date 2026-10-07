@@ -1,5 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#0a84ff" />
-  <text x="32" y="42" font-family="system-ui, sans-serif" font-size="30"
-        font-weight="600" fill="#fff" text-anchor="middle">P</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="geometricPrecision">
+  <style>
+    .mark{
+      fill:none;
+      stroke:#000000;
+      stroke-width:9;
+      stroke-linejoin:round;
+    }
+    @media (prefers-color-scheme: dark){
+      .mark{stroke:#ffffff}
+    }
+  </style>
+  <rect class="mark" x="8" y="8" width="48" height="48" rx="10"/>
 </svg>
