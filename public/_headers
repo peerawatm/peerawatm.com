@@ -1,0 +1,13 @@
+# Custom response headers for Cloudflare Workers static assets.
+# Rules are additive: a request matching several blocks inherits all headers.
+# Docs: https://developers.cloudflare.com/workers/static-assets/headers/
+
+# Font is a stable, rarely-changed asset; cache it for 30 days.
+/fonts/*
+  Cache-Control: public, max-age=2592000
+
+# Baseline hardening for every asset.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN

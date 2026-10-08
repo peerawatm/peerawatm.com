@@ -12,3 +12,7 @@ links-check:
 
 check: links-check
     python3 -m py_compile dev.py tools/socials.py
+
+# Remove Python bytecode caches.
+clean:
+    find . -name __pycache__ -type d -prune -exec rm -rf {} +

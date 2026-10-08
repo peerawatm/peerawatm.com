@@ -4,6 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Peerawat Monviset</title>
+<meta name="description" content="Peerawat Monviset — personal site, artwork, and links.">
+<meta name="author" content="Peerawat Monviset">
+<link rel="canonical" href="https://www.peerawatm.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Peerawat Monviset">
+<meta property="og:title" content="Peerawat Monviset">
+<meta property="og:description" content="Peerawat Monviset — personal site, artwork, and links.">
+<meta property="og:url" content="https://www.peerawatm.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Peerawat Monviset">
+<meta name="twitter:description" content="Peerawat Monviset — personal site, artwork, and links.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/nunito-var.woff2" as="font" type="font/woff2" crossorigin>
 <script>
@@ -25,17 +38,20 @@ try{
   --bg:#ffffff; --card:#ffffff; --ink:#000000;
   --accent:#000000;
   --frame:3px; --canvas:6px; --radius:1rem; --foot-gap:5rem;
+  --tint:rgba(255,255,255,.72);
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
   --bg:#000000; --card:#000000; --ink:#ffffff;
   --accent:#ffffff;
+  --tint:rgba(0,0,0,.65);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
     --bg:#000000; --card:#000000; --ink:#ffffff;
     --accent:#ffffff;
+    --tint:rgba(0,0,0,.65);
   }
 }
 *{box-sizing:border-box}
@@ -50,15 +66,16 @@ header{
 }
 h1{margin:0;font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700;letter-spacing:-.01em}
 .theme{display:inline-flex;gap:.4rem;align-items:center}
-.theme button{
+.theme button,.bar button{
   font:inherit;color:var(--ink);background:transparent;line-height:0;
   border:0;padding:0;width:2.5rem;aspect-ratio:1/1;cursor:pointer;
   border-radius:.7rem;
   display:inline-flex;align-items:center;justify-content:center;
   transition:background .375s ease-out,color .375s ease-out,box-shadow .375s ease-out;
 }
-.theme button:hover{box-shadow:inset 0 0 0 var(--frame) var(--ink);transition-duration:.15s}
+.theme button:hover,.bar button:hover{box-shadow:inset 0 0 0 var(--frame) var(--ink);transition-duration:.15s}
 .theme button[aria-pressed="true"]{color:var(--card);background:var(--accent);box-shadow:none;pointer-events:none}
+.theme button svg,.bar button svg{width:1.5rem;height:1.5rem;display:block}
 main{max-width:74rem;margin:0 auto;padding:1rem 1.5rem var(--foot-gap)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:2rem}
 .tile{
@@ -77,24 +94,33 @@ main{max-width:74rem;margin:0 auto;padding:1rem 1.5rem var(--foot-gap)}
 .tile:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 footer{max-width:74rem;margin:0 auto;padding:0 1.5rem 3rem;color:var(--ink);
   font-size:1.5rem;text-align:left}
-footer .socials{display:flex;justify-content:center;align-items:center;gap:clamp(1.875rem,3.75vw,3.125rem);margin-bottom:3rem}
-footer .soc{color:inherit;text-decoration:none;display:inline-flex}
-footer .soc svg{height:calc(clamp(3rem,7.2vw,3.6rem) * var(--os,1));width:auto;display:block;
-  transition:transform .75s ease-out}                       /* out: 2.5x the in */
+footer .socials{
+  /* 5 icons + 4 gaps must always fit the footer's content box:
+     size = (viewport - 1.5rem padding *2 - gaps) / 5, capped at 3.6rem. */
+  --soc-gap:clamp(.75rem,2.4vw,3.125rem);
+  --soc-size:min(3.6rem,calc((100vw - 3rem - 4 * var(--soc-gap)) / 5));
+  display:flex;justify-content:center;align-items:center;gap:var(--soc-gap);margin-bottom:3rem;
+}
+footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:0 0 auto}
+footer .soc svg{
+  width:var(--soc-size);height:var(--soc-size);aspect-ratio:1/1;display:block;
+  transition:transform .75s ease-out;                       /* out: 2.5x the in */
+}
 footer .soc:hover svg{transition-duration:.30s;
   transition-timing-function:cubic-bezier(.34,1.2,.55,1)}   /* in: punchy */
 footer .copy{font-size:.972em;line-height:1;vertical-align:.01em}
 footer .name{font-weight:700}
 footer .base{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-dialog{border:none;padding:0;background:transparent;width:min(92vw,1100px)}
-dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog{
+  border:none;padding:0;background:transparent;overflow:visible;max-width:none;max-height:none;
+  /* square stage + 2.5rem close bar must fit the viewport; "100vh - 4.5rem" caps the height */
+  width:min(92vw,calc(100vh - 4.5rem),1100px);
+  width:min(92vw,calc(100dvh - 4.5rem),1100px);
+}
+dialog::backdrop{background:var(--tint)}
+body:has(dialog[open]){overflow:hidden}
 .stage{aspect-ratio:1/1;background:var(--card);border-radius:var(--radius)}
 .bar{display:flex;justify-content:flex-end;margin-top:.7rem}
-.bar button{
-  font:inherit;color:var(--ink);background:transparent;border:var(--frame) solid var(--ink);
-  border-radius:var(--radius);padding:.4rem .9rem;cursor:pointer;
-}
-.bar button:hover{color:var(--card);background:var(--accent)}
 </style>
 </head>
 <body>
@@ -108,11 +134,11 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
 
 <footer>
   <div class="socials">
-    <a class="soc" data-brand="pixiv" href="https://www.pixiv.net/en/users/129876664" aria-label="Pixiv" title="Pixiv" rel="noopener" target="_blank"><svg style="--os:.95" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-pixiv" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="x" href="https://x.com/peerawatm_" aria-label="X" title="X" rel="noopener" target="_blank"><svg style="--os:1.06" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-x" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="instagram" href="https://www.instagram.com/peerawatm_/" aria-label="Instagram" title="Instagram" rel="noopener" target="_blank"><svg style="--os:1" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-instagram" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="tiktok" href="https://www.tiktok.com/@peerawatm_" aria-label="TikTok" title="TikTok" rel="noopener" target="_blank"><svg style="--os:.99" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-tiktok" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="youtube" href="https://www.youtube.com/@peerawatm" aria-label="YouTube" title="YouTube" rel="noopener" target="_blank"><svg style="--os:.97" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-youtube" width="24" height="24"/></svg></a>
+    <a class="soc" data-brand="pixiv" href="https://www.pixiv.net/en/users/129876664" aria-label="Pixiv" title="Pixiv" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-pixiv" width="24" height="24"/></svg></a>
+    <a class="soc" data-brand="x" href="https://x.com/peerawatm_" aria-label="X" title="X" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-x" width="24" height="24"/></svg></a>
+    <a class="soc" data-brand="instagram" href="https://www.instagram.com/peerawatm_" aria-label="Instagram" title="Instagram" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-instagram" width="24" height="24"/></svg></a>
+    <a class="soc" data-brand="tiktok" href="https://www.tiktok.com/@peerawatm_" aria-label="TikTok" title="TikTok" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-tiktok" width="24" height="24"/></svg></a>
+    <a class="soc" data-brand="youtube" href="https://www.youtube.com/@peerawatm" aria-label="YouTube" title="YouTube" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-youtube" width="24" height="24"/></svg></a>
   </div>
   <div class="base">
     <div class="name"><span class="copy">©</span> Peerawat Monviset</div>
@@ -133,12 +159,13 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 2.1v2.4M12 19.5v2.4M2.1 12h2.4M19.5 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
   <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5"/></g></symbol>
 </svg>
 
 <dialog id="lb">
   <div class="stage" id="stage"></div>
   <div class="bar">
-    <button type="button" id="close">Close</button>
+    <button type="button" id="close" aria-label="Close" title="Close"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-close" width="24" height="24"/></svg></button>
   </div>
 </dialog>
 
@@ -195,9 +222,9 @@ function applyTheme(t){
 themeBtns.forEach((b) => b.addEventListener("click", () => applyTheme(b.dataset.set)));
 applyTheme(root.dataset.theme || "system");
 
-// Tighten each brand mark's viewBox to its own glyph and drop the fixed
-// 18x18 attributes, so every icon fills the same height and takes its own
-// width from the glyph's real aspect ratio.
+// Recenter each brand mark inside its square 1:1 frame: tighten the viewBox
+// to the glyph's own bounds so the mark sits optically centered. The frame
+// itself is square (CSS), so glyphs keep their natural aspect ratio inside it.
 document.querySelectorAll(".soc svg").forEach((s) => {
   try {
     const b = s.getBBox();
@@ -205,7 +232,6 @@ document.querySelectorAll(".soc svg").forEach((s) => {
     s.setAttribute("viewBox", `${b.x} ${b.y} ${b.width} ${b.height}`);
     s.removeAttribute("width");
     s.removeAttribute("height");
-    s.style.aspectRatio = `${b.width} / ${b.height}`;
   } catch (e) {}
 });
 
