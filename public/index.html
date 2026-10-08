@@ -66,11 +66,12 @@ header{
 }
 h1{
   width:fit-content;margin:0 auto;
-  /* Optically centered: the outer ink edges of both lines sit equidistant from the site
-     centre, so the block shifts .39em right of its bounding box (measured at wght 800). */
-  transform:translateX(.39em);
+  /* The w/M band centre sits .327em left of the box centre (measured at wght 800),
+     so shift the block right to put that band on the site centre. */
+  transform:translateX(.327em);
   font-size:clamp(2.5rem,10vw,5.5rem);font-weight:800;
   letter-spacing:-.02em;line-height:.8;                 /* lines overlap a little vertically */
+  white-space:nowrap;                                   /* each line is one word; never wrap */
 }
 h1>span{display:block}
 h1>span:last-child{padding-left:2.63em}                 /* measured (wght 800): "M" sits directly under the "w" of "Peerawat" */
@@ -82,6 +83,13 @@ h1 .m::before{
   content:"w";position:absolute;left:0;top:0;color:var(--ink);
   transform:translateY(.087em) scaleY(-1.422);
   pointer-events:none;      /* let selection start on the real (transparent) M text under it */
+}
+/* Narrow (one grid column): size the name so the centred w/M band plus the shift fit the
+   content box (right edge never overflows), and balance the gap above the name (2.6rem) with
+   the gap above the first tile (1.5rem header + 1rem main, plus glyph leading). */
+@media (max-width:37.5rem){
+  header{padding-top:2.6rem}
+  h1{font-size:min(5.5rem,calc((100vw - 3rem)/7.5))}   /* name + band-centring shift fit the content box, so the right edge never overflows */
 }
 .theme{display:inline-flex;gap:.4rem;align-items:center}
 .theme button,.bar button{
