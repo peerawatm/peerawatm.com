@@ -35,6 +35,38 @@ function flagPayload(body, ua) {
   return flags.join(",");
 }
 
+// Weekly check: stay quiet unless a row survives the human filter.
+const HUMAN_SQL = `SELECT ts, country, path, cid, ms FROM hits
+  WHERE self = 0 AND webdriver = 0 AND COALESCE(flags, '') = ''
+    AND ts > ?
+  ORDER BY ts DESC LIMIT 10`;
+
+function formatHits(rows) {
+  return rows
+    .map((row) => {
+      const when = new Date(row.ts).toISOString().slice(0, 16).replace("T", " ");
+      return `${when}Z ${row.country || "??"} ${row.path} ${row.ms}ms ${row.cid || "-"}`;
+    })
+    .join("\n");
+}
+
+async function notify(env, title, text) {
+  if (!env.HITS_WEBHOOK) return;
+  const hook = new URL(env.HITS_WEBHOOK);
+  const isNtfy = hook.hostname === "ntfy.sh" || hook.hostname.endsWith(".ntfy.sh");
+  const res = await fetch(
+    env.HITS_WEBHOOK,
+    isNtfy
+      ? { method: "POST", body: text, headers: { title, tags: "eyes" } }
+      : {
+          method: "POST",
+          body: JSON.stringify({ content: `${title}\n\`\`\`\n${text}\n\`\`\`` }),
+          headers: { "content-type": "application/json" },
+        }
+  );
+  if (!res.ok) console.error("alert failed", res.status, await res.text());
+}
+
 async function handleHit(request, env, ctx, url) {
   if (request.method !== "POST") {
     return new Response(null, { status: 405, headers: { allow: "POST" } });
@@ -53,7 +85,6 @@ async function handleHit(request, env, ctx, url) {
   }
 
   const self =
-    url.hostname === "me.peerawatm.com" ||
     url.searchParams.get("me") === "1" ||
     (request.headers.get("cookie") || "").includes("me=1") ||
     (request.headers.get("user-agent") || "").includes("PeerawatAgent");
@@ -107,5 +138,19 @@ export default {
     }
 
     return env.ASSETS.fetch(request);
+  },
+
+  async scheduled(event, env, ctx) {
+    // Eight days, so a weekly run cannot miss a row that lands on the edge of
+    // the window. A hit seen in the overlap may be reported twice.
+    const since = Date.now() - 8 * 24 * 60 * 60 * 1000;
+    try {
+      const { results } = await env.DB.prepare(HUMAN_SQL).bind(since).all();
+      if (results.length) {
+        await notify(env, `peerawatm.com: ${results.length} human hit(s)`, formatHits(results));
+      }
+    } catch (err) {
+      console.error("hits cron failed", err);
+    }
   },
 };
