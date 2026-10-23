@@ -13,11 +13,17 @@
 <meta property="og:title" content="Peerawat Monviset">
 <meta property="og:description" content="Peerawat Monviset — personal site, artwork, and links.">
 <meta property="og:url" content="https://www.peerawatm.com/">
+<meta property="og:image" content="https://www.peerawatm.com/outlier/cover.png">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:alt" content="Outlier cover art">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Peerawat Monviset">
 <meta name="twitter:description" content="Peerawat Monviset — personal site, artwork, and links.">
+<meta name="twitter:image" content="https://www.peerawatm.com/outlier/cover.png">
+<meta name="twitter:image:alt" content="Outlier cover art">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/nunito-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/nunito-var-20fc9b6f.woff2" as="font" type="font/woff2" crossorigin>
 <script>
 (function(){
   var saved = null;
@@ -38,7 +44,7 @@
   font-style:normal;
   font-weight:200 1000;
   font-display:swap;
-  src:url("/fonts/nunito-var.woff2") format("woff2");
+  src:url("/fonts/nunito-var-20fc9b6f.woff2") format("woff2");
 }
 :root{
   color-scheme: light;
@@ -88,6 +94,10 @@ h1 .m::before{
   transform:translateY(.087em) scaleY(-1.422);
   pointer-events:none;      /* let selection start on the real (transparent) M text under it */
 }
+@media (forced-colors:active){
+  h1 .m{color:inherit}
+  h1 .m::before{display:none}
+}
 @media (max-width:37.5rem){
   header{padding-top:2.5rem;padding-bottom:2rem}
   h1{font-size:min(5rem,calc((100vw - 3rem)/7.5))}
@@ -109,7 +119,9 @@ h1 .m::before{
 #theme-toggle .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
 :root[data-theme="dark"] #theme-toggle .sun{opacity:0;transform:rotate(90deg) scale(.6)}
 :root[data-theme="dark"] #theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
-@media (prefers-reduced-motion: reduce){#theme-toggle svg{transition:none}}
+@media (prefers-reduced-motion: reduce){
+  #theme-toggle svg,.soc svg,.work-placeholder{transition:none}
+}
 main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--space-8)}
 .works-heading{text-align:center;margin:0 0 var(--space-4);font-size:clamp(1.75rem,4vw,2rem);font-weight:800}
 .works-grid{display:flex;justify-content:center}
@@ -126,11 +138,10 @@ footer{max-width:74rem;margin:0 auto;padding:0 var(--space-4) var(--space-6);col
 footer .socials{
   /* Row matches the featured card; leftover space becomes gap automatically. */
   --soc-gap:var(--space-2);
-  --soc-size:min(3.6rem,calc((100% - 3 * var(--soc-gap)) / 4));
   display:flex;justify-content:space-between;align-items:center;gap:var(--soc-gap);
   width:var(--card-w);margin:0 auto var(--space-6);
 }
-footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:0 0 auto;width:var(--soc-size)}
+footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:1 1 0;min-width:0;max-width:3.6rem}
 footer .soc svg{
   width:100%;height:auto;aspect-ratio:1/1;display:block;
   transition:transform .75s ease-out;                       /* out: 2.5x the in */
@@ -193,6 +204,7 @@ footer .theme{flex:0 0 auto;margin-left:auto}
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></symbol>
 </svg>
 
+<script src="/theme.js"></script>
 <script>
 function unitVector(e, el){
   const r = el.getBoundingClientRect();
@@ -203,60 +215,6 @@ function unitVector(e, el){
   if (len > 1) { dx /= len; dy /= len; }
   return [dx, dy];
 }
-
-(function(){
-  const root = document.documentElement;
-  const toggle = document.getElementById("theme-toggle");
-  const meta = document.getElementById("theme-color");
-  let media = null;
-  try{ media = window.matchMedia("(prefers-color-scheme: dark)"); }catch(e){}
-  let explicit = null;
-  try{
-    const saved = localStorage.getItem("theme");
-    explicit = saved === "dark" || saved === "light" ? saved : null;
-  }catch(e){}
-
-  function systemTheme(){
-    return media && media.matches ? "dark" : "light";
-  }
-
-  function applyTheme(theme, persist){
-    const dark = theme === "dark";
-    root.dataset.theme = dark ? "dark" : "light";
-    if (meta) meta.content = dark ? "#000000" : "#ffffff";
-    if (toggle){
-      const label = dark ? "Switch to light theme" : "Switch to dark theme";
-      toggle.setAttribute("aria-label", label);
-      toggle.title = label;
-    }
-    if (persist){
-      try{ localStorage.setItem("theme", dark ? "dark" : "light"); }catch(e){}
-    }
-  }
-
-  applyTheme(explicit || systemTheme(), false);
-
-  if (toggle){
-    toggle.addEventListener("click", function(){
-      explicit = root.dataset.theme === "dark" ? "light" : "dark";
-      applyTheme(explicit, true);
-    });
-  }
-
-  if (media){
-    const onSystem = function(e){
-      if (!explicit) applyTheme(e.matches ? "dark" : "light", false);
-    };
-    if (media.addEventListener) media.addEventListener("change", onSystem);
-    else if (media.addListener) media.addListener(onSystem);
-  }
-
-  window.addEventListener("storage", function(e){
-    if (e.key !== "theme" && e.key !== null) return;
-    explicit = e.newValue === "dark" || e.newValue === "light" ? e.newValue : null;
-    applyTheme(explicit || systemTheme(), false);
-  });
-})();
 
 // Recenter each brand mark inside its square 1:1 frame: tighten the viewBox
 // to the glyph's own bounds so the mark sits optically centered. The frame
@@ -275,7 +233,9 @@ document.querySelectorAll(".soc svg").forEach((s) => {
 const LEAN = 4;        // px, max travel at the icon edge
 const LEAN_CURVE = 2.2; // higher = calmer near the centre (ease-in response)
 const leanResp = (v) => Math.sign(v) * Math.pow(Math.abs(v), LEAN_CURVE);
-document.querySelectorAll(".soc").forEach((a) => {
+let reduceMotion = false;
+try{ reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+if (!reduceMotion) document.querySelectorAll(".soc").forEach((a) => {
   const svg = a.querySelector("svg");
   if (!svg) return;
   a.addEventListener("pointermove", (e) => {
@@ -311,20 +271,15 @@ document.querySelectorAll(".soc").forEach((a) => {
       h: innerHeight,
       wd: navigator.webdriver === true,
       ms: Math.round(performance.now() - started),
-      cid: cid,
-      lang: navigator.language || "",
-      hc: navigator.hardwareConcurrency || 0
+      cid: cid
     });
     var url = "/hit" + marker;
     var blob = new Blob([body], { type: "application/json" });
     try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(url, blob);
-        return;
-      }
+      if (navigator.sendBeacon && navigator.sendBeacon(url, blob)) return;
     } catch (e) {}
     try {
-      fetch(url, { method: "POST", body: blob, keepalive: true, credentials: "same-origin" });
+      fetch(url, { method: "POST", body: blob, keepalive: true, credentials: "same-origin" }).catch(function(){});
     } catch (e) {}
   }
   setTimeout(send, 15000);

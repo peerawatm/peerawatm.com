@@ -15,6 +15,11 @@ socials-check:
 check: socials-check
 	python3 -m py_compile dev.py tools/socials.py
 	node --check src/index.js
+	node --check public/theme.js
+	node --test src/
+	sqlite3 :memory: < migrations/0001_hits.sql
+db-migrate:
+	{{wrangler}} d1 migrations apply peerawatm-hits --remote
 deploy: check
 	{{wrangler}} deploy
 deploy-dry: check
@@ -28,6 +33,22 @@ dns:
 		echo "TXT _atproto already present"
 	else
 		cf dns records create -z peerawatm.com --body "$body"
+	fi
+rate-limit:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	zone='peerawatm.com'
+	desc='Cap /hit beacons per IP'
+	body='{"action":"block","description":"'"$desc"'","enabled":true,"expression":"(http.request.uri.path eq \"/hit\")","ratelimit":{"characteristics":["ip.src","cf.colo.id"],"mitigation_timeout":10,"period":10,"requests_per_period":5}}'
+	current=$(cf rulesets entrypoint get http_ratelimit -z "$zone" 2>/dev/null || true)
+	if [ -n "$current" ] && jq -e --arg d "$desc" 'any(.rules[]?; .description == $d)' <<<"$current" >/dev/null; then
+		echo "rate limit already present"
+		exit 0
+	fi
+	if [ -n "$current" ]; then
+		cf rulesets rules create "$(jq -r '.id' <<<"$current")" -z "$zone" --body "$body"
+	else
+		cf rulesets create -z "$zone" --kind zone --phase http_ratelimit --name 'peerawatm rate limits' --rules "[$body]"
 	fi
 doctor:
 	#!/usr/bin/env bash

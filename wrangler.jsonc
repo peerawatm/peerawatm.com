@@ -18,7 +18,8 @@
     {
       "binding": "DB",
       "database_name": "peerawatm-hits",
-      "database_id": "d231fdbc-5381-4d1c-9b6e-1d657a2bbbe6"
+      "database_id": "d231fdbc-5381-4d1c-9b6e-1d657a2bbbe6",
+      "migrations_dir": "migrations"
     }
   ]
 }
