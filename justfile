@@ -48,7 +48,7 @@ doctor:
 	test "$code" = 200
 	grep -q '"did":"{{did}}"' <<<"$bsky"
 
-dashboard:
+dash:
 	open "https://dash.cloudflare.com"
 
 open:

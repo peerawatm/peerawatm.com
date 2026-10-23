@@ -13,10 +13,12 @@ Priorities, in order:
 
 Stdlib only. Configure with ``HOST``, ``PORT``, ``NO_OPEN``.
 """
+
 from __future__ import annotations
 
 import os
 import signal
+import sys
 import threading
 import urllib.parse
 import webbrowser
@@ -28,9 +30,14 @@ HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8787"))
 NO_OPEN = os.environ.get("NO_OPEN", "") != ""
 IGNORED_SUFFIX = ("~", ".swp", ".swo", ".tmp")
-RETRYABLE = (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError)
-POLL = 0.4        # seconds between cheap change-detection scans
-LONGPOLL = 25.0   # seconds a reload request waits before replying "unchanged"
+RETRYABLE = (
+    BrokenPipeError,
+    ConnectionResetError,
+    ConnectionAbortedError,
+    TimeoutError,
+)
+POLL = 0.4  # seconds between cheap change-detection scans
+LONGPOLL = 25.0  # seconds a reload request waits before replying "unchanged"
 
 _stop = threading.Event()
 _cond = threading.Condition()
@@ -38,11 +45,11 @@ _version = 0
 
 RELOAD = (
     b'<script>(function(){var v=null;function tick(){var q=v===null?"":"?since="+v;'
-    b'var ctl=new AbortController();var to=setTimeout(function(){ctl.abort();},30000);'
+    b"var ctl=new AbortController();var to=setTimeout(function(){ctl.abort();},30000);"
     b'fetch("/__dev/version"+q,{cache:"no-store",signal:ctl.signal})'
-    b'.then(function(r){return r.text();})'
-    b'.then(function(x){clearTimeout(to);if(v!==null&&x!==v){location.reload();return;}v=x;tick();})'
-    b'.catch(function(){clearTimeout(to);setTimeout(tick,1000);});}tick();})();</script>'
+    b".then(function(r){return r.text();})"
+    b".then(function(x){clearTimeout(to);if(v!==null&&x!==v){location.reload();return;}v=x;tick();})"
+    b".catch(function(){clearTimeout(to);setTimeout(tick,1000);});}tick();})();</script>"
 )
 
 
@@ -88,7 +95,7 @@ def watcher() -> None:
 
 class Handler(SimpleHTTPRequestHandler):
     protocol_version = "HTTP/1.1"  # keep-alive: warm sockets for assets + long-poll
-    timeout = 65                   # reap idle kept-alive connections
+    timeout = 65  # reap idle kept-alive connections
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -173,7 +180,9 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def _parse_since(self) -> int | None:
-        raw = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("since", [None])[0]
+        raw = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get(
+            "since", [None]
+        )[0]
         try:
             return int(raw) if raw is not None else None
         except (TypeError, ValueError):
@@ -195,6 +204,11 @@ class Server(ThreadingHTTPServer):
     block_on_close = False
     allow_reuse_address = True
     request_queue_size = 64
+
+    def handle_error(self, request, client_address):
+        if isinstance(sys.exc_info()[1], RETRYABLE):
+            return
+        super().handle_error(request, client_address)
 
 
 def bind(preferred: int) -> tuple[Server, int]:
