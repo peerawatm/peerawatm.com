@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="page-home">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,154 +23,34 @@
 <meta name="twitter:image" content="https://www.peerawatm.com/outlier/cover.png">
 <meta name="twitter:image:alt" content="Outlier cover art">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/nunito-var-20fc9b6f.woff2" as="font" type="font/woff2" crossorigin>
-<script>
-(function(){
-  var saved = null;
-  try{ saved = localStorage.getItem("theme"); }catch(e){}
-  var explicit = saved === "dark" || saved === "light" ? saved : null;
-  var dark = explicit === "dark";
-  if (!explicit){
-    try{ dark = window.matchMedia("(prefers-color-scheme: dark)").matches; }catch(e){}
-  }
-  document.documentElement.dataset.theme = dark ? "dark" : "light";
-  var meta = document.getElementById("theme-color");
-  if (meta) meta.content = dark ? "#000000" : "#ffffff";
-})();
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Peerawat Monviset",
+  "url": "https://www.peerawatm.com/",
+  "sameAs": [
+    "https://x.com/peerawatm_",
+    "https://www.instagram.com/peerawatm_",
+    "https://www.tiktok.com/@peerawatm_",
+    "https://www.youtube.com/@peerawatm",
+    "https://github.com/peerawatm"
+  ]
+}
 </script>
-<style>
-@font-face{
-  font-family:"Nunito";
-  font-style:normal;
-  font-weight:200 1000;
-  font-display:swap;
-  src:url("/fonts/nunito-var-20fc9b6f.woff2") format("woff2");
-}
-:root{
-  color-scheme: light;
-  --bg:#ffffff; --ink:#000000; --placeholder:#e5e5e5;
-  --accent:#000000;
-  --frame:3px; --radius:1rem;
-  --space-1:.25rem; --space-2:.5rem; --space-3:1rem; --space-4:1.5rem;
-  --space-5:2rem; --space-6:3rem; --space-8:4rem;
-  --card-w:min(100%,32rem);                              /* hero width; full-bleed on phones */
-}
-:root[data-theme="dark"]{
-  color-scheme: dark;
-  --bg:#000000; --ink:#ffffff; --placeholder:#292929;
-  --accent:#ffffff;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme]){
-    color-scheme: dark;
-    --bg:#000000; --ink:#ffffff; --placeholder:#292929;
-    --accent:#ffffff;
-  }
-}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{
-  background:var(--bg); color:var(--ink);
-  font:16px/1.5 Nunito,ui-rounded,-apple-system,system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-header{
-  max-width:74rem;margin:0 auto;padding:var(--space-8) var(--space-4) 1.6rem;text-align:left;
-}
-h1{
-  width:fit-content;margin:0 auto;
-  font-size:clamp(2.5rem,9vw,5rem);font-weight:800;
-  letter-spacing:-.02em;line-height:.8;                 /* lines overlap a little vertically */
-  white-space:nowrap;
-}
-h1>span{display:block}
-h1>span:last-child{padding-left:2.63em}                 /* measured (wght 800): "M" sits directly under the "w" of "Peerawat" */
-/* The M is a flipped "w" drawn over the real, transparent M kept for a11y and SEO. */
-h1 .m{position:relative;display:inline-block;color:transparent}
-h1 .m::before{
-  content:"w";position:absolute;left:0;top:0;color:var(--ink);
-  transform:translateY(.087em) scaleY(-1.422);
-  pointer-events:none;      /* let selection start on the real (transparent) M text under it */
-}
-@media (forced-colors:active){
-  h1 .m{color:inherit}
-  h1 .m::before{display:none}
-}
-@media (max-width:37.5rem){
-  header{padding-top:2.5rem;padding-bottom:2rem}
-  h1{font-size:min(5rem,calc((100vw - 3rem)/7.5))}
-  main{padding-top:1.5rem}
-}
-.theme{display:inline-flex;gap:.4rem;align-items:center}
-.theme button{
-  font:inherit;color:var(--ink);background:transparent;line-height:0;
-  border:0;padding:0;width:2.5rem;aspect-ratio:1/1;cursor:pointer;
-  border-radius:.7rem;
-  display:inline-flex;align-items:center;justify-content:center;
-  transition:background .375s ease-out,color .375s ease-out,box-shadow .375s ease-out;
-}
-.theme button:hover{box-shadow:inset 0 0 0 var(--frame) var(--ink);transition-duration:.15s}
-.theme button svg{width:1.5rem;height:1.5rem;display:block}
-#theme-toggle{display:grid;place-items:center}
-#theme-toggle svg{grid-area:1/1;transform-origin:center;transition:opacity .25s ease,transform .5s cubic-bezier(.2,.8,.2,1)}
-#theme-toggle .sun{opacity:1;transform:rotate(0) scale(1)}
-#theme-toggle .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
-:root[data-theme="dark"] #theme-toggle .sun{opacity:0;transform:rotate(90deg) scale(.6)}
-:root[data-theme="dark"] #theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
-@media (prefers-reduced-motion: reduce){
-  #theme-toggle svg,.soc svg,.work-placeholder{transition:none}
-}
-main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--space-8)}
-.works-heading{text-align:center;margin:0 0 var(--space-4);font-size:clamp(1.75rem,4vw,2rem);font-weight:800}
-.works-grid{display:flex;justify-content:center}
-.work-card{display:block;width:var(--card-w);color:inherit;text-align:center;text-decoration:none}
-.work-placeholder{display:block;aspect-ratio:3/4;overflow:hidden;border-radius:var(--radius);background:var(--placeholder);transition:transform .3s ease}
-.work-placeholder img{display:block;width:100%;height:100%;object-fit:cover}
-.work-card:hover .work-placeholder{transform:translateY(-3px)}
-.work-title{display:block;margin-top:var(--space-3);font-size:1.5rem;font-weight:700;line-height:1.2}
-.work-action{display:inline-block;margin-top:var(--space-1);font-size:1rem;font-weight:700;line-height:1.25;opacity:.72}
-.work-card:hover .work-action{text-decoration:underline;opacity:1}
-.work-card:focus-visible{outline:3px solid var(--accent);outline-offset:4px;border-radius:var(--radius)}
-footer{max-width:74rem;margin:0 auto;padding:0 var(--space-4) var(--space-6);color:var(--ink);
-  font-size:1.5rem;text-align:left}
-footer .socials{
-  --soc-gap:var(--space-2);
-  display:flex;justify-content:space-between;align-items:center;gap:var(--soc-gap);
-  width:var(--card-w);margin:0 auto var(--space-6);
-}
-footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:1 1 0;min-width:0;max-width:3.6rem}
-footer .soc svg{
-  width:100%;height:auto;aspect-ratio:1/1;display:block;
-  transition:transform .75s ease-out;
-}
-footer .soc:hover svg{transition-duration:.30s;
-  transition-timing-function:cubic-bezier(.34,1.2,.55,1)}
-footer .copy{font-size:.972em;line-height:1;vertical-align:.01em}
-footer .name{font-weight:700}
-footer .name a{color:inherit;text-decoration:none}
-footer .name a:hover{text-decoration:underline}
-footer .base{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:var(--space-2);flex-wrap:nowrap;
-}
-footer .theme{flex:0 0 auto;margin-left:auto}
-@media (min-width:37.5rem){
-  footer .socials{width:auto;justify-content:center;gap:var(--space-4)}
-  footer .soc{max-width:2rem}
-  .work-title{font-size:2rem}
-}
-</style>
-<noscript><style>#theme-toggle{display:none}</style></noscript>
+<link rel="preload" href="/fonts/nunito-var-20fc9b6f.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/theme.css">
+<script src="/theme.js"></script>
 </head>
 <body>
-<header>
-  <h1>
+<header class="home-header">
+  <h1 class="wordmark">
     <span>Peerawat</span>
     <span><span class="m">M</span>onviset</span>
   </h1>
 </header>
 
-<main>
+<main class="home-main">
   <h2 class="works-heading">Featured work</h2>
   <div class="works-grid">
     <a class="work-card" href="/outlier/">
@@ -181,17 +61,57 @@ footer .theme{flex:0 0 auto;margin-left:auto}
   </div>
 </main>
 
-<footer>
+<footer class="home-footer">
   <div class="socials">
-    <a class="soc" data-brand="x" href="https://x.com/peerawatm_" aria-label="X" title="X" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-x" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="instagram" href="https://www.instagram.com/peerawatm_" aria-label="Instagram" title="Instagram" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-instagram" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="tiktok" href="https://www.tiktok.com/@peerawatm_" aria-label="TikTok" title="TikTok" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-tiktok" width="24" height="24"/></svg></a>
-    <a class="soc" data-brand="youtube" href="https://www.youtube.com/@peerawatm" aria-label="YouTube" title="YouTube" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-youtube" width="24" height="24"/></svg></a>
+    <a
+      class="soc"
+      data-brand="x"
+      href="https://x.com/peerawatm_"
+      aria-label="X"
+      title="X"
+      rel="me noopener"
+      target="_blank"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-x" width="24" height="24"/></svg>
+    </a>
+    <a
+      class="soc"
+      data-brand="instagram"
+      href="https://www.instagram.com/peerawatm_"
+      aria-label="Instagram"
+      title="Instagram"
+      rel="me noopener"
+      target="_blank"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-instagram" width="24" height="24"/></svg>
+    </a>
+    <a
+      class="soc"
+      data-brand="tiktok"
+      href="https://www.tiktok.com/@peerawatm_"
+      aria-label="TikTok"
+      title="TikTok"
+      rel="me noopener"
+      target="_blank"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-tiktok" width="24" height="24"/></svg>
+    </a>
+    <a
+      class="soc"
+      data-brand="youtube"
+      href="https://www.youtube.com/@peerawatm"
+      aria-label="YouTube"
+      title="YouTube"
+      rel="me noopener"
+      target="_blank"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-youtube" width="24" height="24"/></svg>
+    </a>
   </div>
   <div class="base">
     <div class="name"><a href="https://github.com/peerawatm/peerawatm.com" rel="noopener" target="_blank"><span class="copy">©</span> Peerawat Monviset</a></div>
     <div class="theme">
-      <button type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg></button>
     </div>
   </div>
 </footer>
@@ -205,7 +125,6 @@ footer .theme{flex:0 0 auto;margin-left:auto}
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></symbol>
 </svg>
 
-<script src="/theme.js"></script>
 <script>
 function unitVector(e, el){
   const r = el.getBoundingClientRect();
