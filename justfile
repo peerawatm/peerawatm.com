@@ -7,13 +7,17 @@ default:
 
 [no-exit-message]
 dev:
-	python3 dev.py
-socials-sync:
-	python3 tools/socials.py --write
-socials-check:
-	python3 tools/socials.py --check
-check: socials-check
-	python3 -m py_compile dev.py tools/socials.py
+	#!/usr/bin/env bash
+	set -euo pipefail
+	(
+		for _ in {1..40}; do
+			curl -sf -o /dev/null http://localhost:8787/ && break
+			sleep 0.25
+		done
+		open http://localhost:8787
+	) &
+	{{wrangler}} dev --port 8787 --test-scheduled --live-reload
+check:
 	node --check src/index.js
 	node --check public/theme.js
 	node --test src/
@@ -66,5 +70,3 @@ open:
 	open "https://www.peerawatm.com"
 gh:
 	open "https://github.com/peerawatm/peerawatm.com"
-clean:
-	find . -name __pycache__ -type d -prune -exec rm -rf {} +
