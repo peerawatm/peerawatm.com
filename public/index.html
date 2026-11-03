@@ -64,7 +64,25 @@ body{
 header{
   max-width:74rem;margin:0 auto;padding:4rem 1.5rem 1.5rem;text-align:left;
 }
-h1{margin:0;font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700;letter-spacing:-.01em}
+h1{
+  width:fit-content;margin:0 auto;
+  /* Optically centered: the outer ink edges of both lines sit equidistant from the site
+     centre, so the block shifts .39em right of its bounding box (measured at wght 800). */
+  transform:translateX(.39em);
+  font-size:clamp(2.5rem,10vw,5.5rem);font-weight:800;
+  letter-spacing:-.02em;line-height:.8;                 /* lines overlap a little vertically */
+}
+h1>span{display:block}
+h1>span:last-child{padding-left:2.63em}                 /* measured (wght 800): "M" sits directly under the "w" of "Peerawat" */
+/* The capital M is an upside-down "w": the real M stays in the DOM (transparent) for
+   screen readers and SEO, and a vertically flipped, cap-height "w" is drawn over it.
+   translateY + scaleY are computed from the Nunito glyph boxes at wght 800. */
+h1 .m{position:relative;display:inline-block;color:transparent}
+h1 .m::before{
+  content:"w";position:absolute;left:0;top:0;color:var(--ink);
+  transform:translateY(.087em) scaleY(-1.422);
+  pointer-events:none;      /* let selection start on the real (transparent) M text under it */
+}
 .theme{display:inline-flex;gap:.4rem;align-items:center}
 .theme button,.bar button{
   font:inherit;color:var(--ink);background:transparent;line-height:0;
@@ -111,6 +129,12 @@ footer .soc:hover svg{transition-duration:.30s;
 footer .copy{font-size:.972em;line-height:1;vertical-align:.01em}
 footer .name{font-weight:700}
 footer .base{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+/* Narrow: stack, with the theme control above the copyright so the legal line stays last.
+   Applies below the wrap point (name + buttons need ~437px). */
+@media (max-width:27.5rem){
+  footer .base{flex-direction:column;align-items:flex-start}
+  footer .theme{order:-1}
+}
 dialog{
   border:none;padding:0;background:transparent;overflow:visible;max-width:none;max-height:none;
   /* square stage + 2.5rem close bar must fit the viewport; "100vh - 4.5rem" caps the height */
@@ -125,7 +149,7 @@ body:has(dialog[open]){overflow:hidden}
 </head>
 <body>
 <header>
-  <h1>Peerawat Monviset</h1>
+  <h1><span>Peerawat</span><span><span class="m">M</span>onviset</span></h1>
 </header>
 
 <main>
