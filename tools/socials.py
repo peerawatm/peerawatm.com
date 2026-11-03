@@ -37,24 +37,31 @@ def rewrite(html: str, links: dict[str, str]) -> tuple[str, list[str]]:
             return tag
         brand = brand_match.group(1)
         if brand not in links:
-            sys.exit(f"{TOML_PATH.name}: no entry for data-brand=\"{brand}\"")
+            sys.exit(f'{TOML_PATH.name}: no entry for data-brand="{brand}"')
         seen.add(brand)
         href = f'href="{links[brand]}"'
-        if HREF.search(tag).group(0) != href:
+        current = HREF.search(tag)
+        if not current:
+            sys.exit(f'{HTML_PATH.name}: data-brand="{brand}" anchor has no href')
+        if current.group(0) != href:
             changed.append(brand)
         return HREF.sub(href, tag, count=1)
 
     out = ANCHOR.sub(sub, html)
     extras = set(links) - seen
     if extras:
-        sys.exit(f"{TOML_PATH.name}: entries with no matching anchor: {', '.join(sorted(extras))}")
+        sys.exit(
+            f"{TOML_PATH.name}: entries with no matching anchor: {', '.join(sorted(extras))}"
+        )
     return out, changed
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     mode = ap.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--write", action="store_true", help="write changes into public/index.html")
+    mode.add_argument(
+        "--write", action="store_true", help="write changes into public/index.html"
+    )
     mode.add_argument("--check", action="store_true", help="exit 1 if out of sync")
     args = ap.parse_args()
 
@@ -64,7 +71,9 @@ def main() -> None:
 
     if args.check:
         if changed:
-            sys.exit("drift: public/index.html is out of sync for " + ", ".join(changed))
+            sys.exit(
+                "drift: public/index.html is out of sync for " + ", ".join(changed)
+            )
         print("links OK")
         return
 

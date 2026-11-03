@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Outlier</title>
 <meta name="theme-color" content="#ffffff" id="theme-color">
+<link rel="preload" href="/fonts/nunito-var-20fc9b6f.woff2" as="font" type="font/woff2" crossorigin>
 <script>
 (function(){
   var saved = null;
@@ -21,10 +22,10 @@
 })();
 </script>
 <style>
-@font-face{font-family:Nunito;font-style:normal;font-weight:200 1000;font-display:swap;src:url("/fonts/nunito-var.woff2") format("woff2")}
-:root{color-scheme:light;--bg:#fff;--ink:#000;--muted:#595959;--panel:#e5e5e5;--line:#d6d6d6;--cover:#e5e5e5;--radius:1.25rem;--frame:3px}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--panel:#292929;--line:#3d3d3d;--cover:#292929}
-@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--panel:#292929;--line:#3d3d3d;--cover:#292929}}
+@font-face{font-family:Nunito;font-style:normal;font-weight:200 1000;font-display:swap;src:url("/fonts/nunito-var-20fc9b6f.woff2") format("woff2")}
+:root{color-scheme:light;--bg:#fff;--ink:#000;--muted:#595959;--line:#d6d6d6;--cover:#e5e5e5;--radius:1.25rem;--frame:3px}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--line:#3d3d3d;--cover:#292929}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--line:#3d3d3d;--cover:#292929}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:1.5rem}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,ui-rounded,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -80,60 +81,6 @@ h2{margin:0;font-size:clamp(1.75rem,4vw,2.3rem);font-weight:700;letter-spacing:-
   </section>
 </main>
 <footer class="site-footer">© Peerawat Monviset · All rights reserved.</footer>
-<script>
-(function(){
-  const root = document.documentElement;
-  const toggle = document.getElementById("theme-toggle");
-  const meta = document.getElementById("theme-color");
-  let media = null;
-  try{ media = window.matchMedia("(prefers-color-scheme: dark)"); }catch(e){}
-  let explicit = null;
-  try{
-    const saved = localStorage.getItem("theme");
-    explicit = saved === "dark" || saved === "light" ? saved : null;
-  }catch(e){}
-
-  function systemTheme(){
-    return media && media.matches ? "dark" : "light";
-  }
-
-  function applyTheme(theme, persist){
-    const dark = theme === "dark";
-    root.dataset.theme = dark ? "dark" : "light";
-    if (meta) meta.content = dark ? "#000000" : "#ffffff";
-    if (toggle){
-      const label = dark ? "Switch to light theme" : "Switch to dark theme";
-      toggle.setAttribute("aria-label", label);
-      toggle.title = label;
-    }
-    if (persist){
-      try{ localStorage.setItem("theme", dark ? "dark" : "light"); }catch(e){}
-    }
-  }
-
-  applyTheme(explicit || systemTheme(), false);
-
-  if (toggle){
-    toggle.addEventListener("click", function(){
-      explicit = root.dataset.theme === "dark" ? "light" : "dark";
-      applyTheme(explicit, true);
-    });
-  }
-
-  if (media){
-    const onSystem = function(e){
-      if (!explicit) applyTheme(e.matches ? "dark" : "light", false);
-    };
-    if (media.addEventListener) media.addEventListener("change", onSystem);
-    else if (media.addListener) media.addListener(onSystem);
-  }
-
-  window.addEventListener("storage", function(e){
-    if (e.key !== "theme" && e.key !== null) return;
-    explicit = e.newValue === "dark" || e.newValue === "light" ? e.newValue : null;
-    applyTheme(explicit || systemTheme(), false);
-  });
-})();
-</script>
+<script src="/theme.js"></script>
 </body>
 </html>
