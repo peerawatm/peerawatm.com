@@ -42,7 +42,7 @@
 html,body{margin:0}
 body{
   background:var(--bg); color:var(--ink);
-  font-family:Nunito,ui-rounded,-apple-system,system-ui,sans-serif;
+  font-family:Nunito,"Noto Sans Thai","IBM Plex Sans Thai","Leelawadee UI","Sarabun",ui-rounded,-apple-system,system-ui,sans-serif;
   font-size:16px;
   -webkit-font-smoothing:antialiased;
 }
@@ -63,6 +63,15 @@ html.js .theme-toggle{display:grid;place-items:center}
 :root[data-theme="dark"] .theme-toggle .sun{display:none}
 :root[data-theme="dark"] .theme-toggle .moon{display:block}
 
+/* component: language switch */
+.lang-switch{
+  font-size:1rem; font-weight:700; line-height:1; color:inherit; text-decoration:none;
+  padding:var(--space-2); border-radius:var(--radius-sm);
+}
+.lang-switch:hover{text-decoration:underline}
+.lang-switch:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.header-actions{display:flex;align-items:center;gap:var(--space-1)}
+
 /* component: wordmark */
 .wordmark{
   width:fit-content; margin:0 auto;
@@ -74,10 +83,14 @@ html.js .theme-toggle{display:grid;place-items:center}
 .wordmark>span:last-child{padding-left:2.63em}           /* optical, off-grid: "M" sits under the "w" of "Peerawat" at wght 800 */
 .wordmark .m{position:relative;display:inline-block;color:transparent}
 .wordmark .m::before{
-  content:"w"; position:absolute; left:0; top:0; color:var(--ink);
+  content:"w" / ""; position:absolute; left:0; top:0; color:var(--ink);
   transform:translateY(.087em) scaleY(-1.422);           /* optical, off-grid: glass M built from a flipped w */
   pointer-events:none;      /* let selection start on the real (transparent) M text under it */
 }
+
+/* i18n: Thai stacks the two name parts; no flipped-w "M" to build */
+.wordmark--th{letter-spacing:0;line-height:1.3;text-align:end}
+.wordmark--th>span:last-child{padding-left:0}
 
 /* component: work card */
 .works-heading{text-align:center;margin:0 0 var(--space-4);font-size:1.5625rem;font-weight:800}
@@ -108,21 +121,23 @@ html.js .theme-toggle{display:grid;place-items:center}
 .home-footer .name{font-weight:700}
 .home-footer .name a{color:inherit;text-decoration:none}
 .home-footer .name a:hover{text-decoration:underline}
+.home-footer .soc:focus-visible,.home-footer .name a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--radius-sm)}
 
 /* page: home */
 html.page-home body{line-height:1.5}
-.home-header{max-width:74rem;margin:0 auto;padding:var(--space-7) var(--space-4) 1.5rem;text-align:left}
+.home-header{max-width:74rem;margin:0 auto;padding:var(--space-7) var(--space-4) 1.5rem;text-align:start}
 .home-main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--space-7)}
 .home-footer{
   max-width:74rem;margin:0 auto;padding:0 var(--space-4) var(--space-6);color:var(--ink);
-  font-size:1.25rem;text-align:left;
+  font-size:1.25rem;text-align:start;
 }
 .home-footer .base{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);flex-wrap:nowrap}
 .theme{display:inline-flex;gap:var(--space-1);align-items:center}
-.home-footer .theme{flex:0 0 auto;margin-left:auto}
+.home-footer .theme{flex:0 0 auto;margin-inline-start:auto}
 @media (max-width:37.5rem){
   .home-header{padding-top:2.5rem;padding-bottom:2rem}
   .home-main{padding-top:1.5rem}
+  .home-footer{font-size:1rem}
 }
 @media (min-width:37.5rem){
   .home-footer .socials{width:auto;justify-content:center;gap:var(--space-4)}
@@ -159,6 +174,9 @@ html.page-outlier a:focus-visible{outline:2px solid currentColor;outline-offset:
   .cover-art{width:min(100%,19rem);justify-self:center}
 }
 @media (max-width:27rem){.site-header,.outlier-main,.site-footer{width:calc(100% - 2rem)}}
+
+/* i18n: Thai marks sit above and below the line box */
+body:lang(th){line-height:1.6}
 
 /* preferences */
 @media (forced-colors:active){

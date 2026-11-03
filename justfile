@@ -29,7 +29,7 @@ style:
 	import fs from "node:fs";
 
 	const css = fs.readFileSync("public/theme.css", "utf8");
-	const pages = ["public/index.html", "public/outlier/index.html"];
+	const pages = ["public/index.html", "public/outlier/index.html", "public/th/index.html", "public/th/outlier/index.html"];
 
 	function block(re) {
 	  const start = css.search(re);

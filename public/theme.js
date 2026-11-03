@@ -20,7 +20,9 @@
     if (meta) meta.content = dark ? "#000000" : "#ffffff";
     const toggle = document.getElementById("theme-toggle");
     if (toggle) {
-      const label = dark ? "Switch to light theme" : "Switch to dark theme";
+      const label = dark
+        ? toggle.dataset.labelLight || "Switch to light theme"
+        : toggle.dataset.labelDark || "Switch to dark theme";
       toggle.setAttribute("aria-label", label);
       toggle.title = label;
     }

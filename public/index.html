@@ -8,7 +8,12 @@
 <meta name="description" content="Peerawat Monviset — personal site, artwork, and links.">
 <meta name="author" content="Peerawat Monviset">
 <link rel="canonical" href="https://www.peerawatm.com/">
+<link rel="alternate" hreflang="en" href="https://www.peerawatm.com/">
+<link rel="alternate" hreflang="th" href="https://www.peerawatm.com/th/">
+<link rel="alternate" hreflang="x-default" href="https://www.peerawatm.com/">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="th_TH">
 <meta property="og:site_name" content="Peerawat Monviset">
 <meta property="og:title" content="Peerawat Monviset">
 <meta property="og:description" content="Peerawat Monviset — personal site, artwork, and links.">
@@ -28,6 +33,7 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Peerawat Monviset",
+  "alternateName": "พีระวัฒน์ มนต์วิเศษ",
   "url": "https://www.peerawatm.com/",
   "sameAs": [
     "https://x.com/peerawatm_",
@@ -44,7 +50,7 @@
 </head>
 <body>
 <header class="home-header">
-  <h1 class="wordmark">
+  <h1 class="wordmark" aria-label="Peerawat Monviset">
     <span>Peerawat</span>
     <span><span class="m">M</span>onviset</span>
   </h1>
@@ -111,7 +117,8 @@
   <div class="base">
     <div class="name"><a href="https://github.com/peerawatm/peerawatm.com" rel="noopener" target="_blank"><span class="copy">©</span> Peerawat Monviset</a></div>
     <div class="theme">
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg></button>
+      <a class="lang-switch" href="/th/" hreflang="th" lang="th" aria-label="เปลี่ยนเป็นภาษาไทย">ไทย</a>
+      <button type="button" class="theme-toggle" id="theme-toggle" data-label-dark="Switch to dark theme" data-label-light="Switch to light theme" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg></button>
     </div>
   </div>
 </footer>

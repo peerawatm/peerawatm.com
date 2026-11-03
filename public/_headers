@@ -16,6 +16,8 @@
 # Defense in depth for the work-in-progress page; the meta tag is the primary.
 /outlier/*
   X-Robots-Tag: noindex, nofollow
+/th/outlier/*
+  X-Robots-Tag: noindex, nofollow
 
 /favicon.svg
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
