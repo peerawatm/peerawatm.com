@@ -87,10 +87,6 @@ style:
 	'
 db-migrate:
 	{{wrangler}} d1 migrations apply peerawatm-hits --remote
-deploy: check
-	{{wrangler}} deploy
-deploy-dry: check
-	{{wrangler}} deploy --dry-run
 dns:
 	#!/usr/bin/env bash
 	set -euo pipefail
