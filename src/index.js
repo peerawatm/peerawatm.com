@@ -132,8 +132,7 @@ async function handleHit(request, env, ctx, url) {
     return new Response(null, { status: 405, headers: { allow: "POST" } });
   }
 
-  // Advisory only: browsers send no-cors for beacons, but pre-2023 Safari
-  // omits the header, and rejecting an absent header drops real visitors.
+  // Advisory only: pre-2023 Safari omits sec-fetch-mode, so absence is allowed.
   const mode = request.headers.get("sec-fetch-mode");
   if (mode !== null && !FETCH_MODES.has(mode)) {
     return new Response(null, { status: 400 });
@@ -177,8 +176,7 @@ async function handleHit(request, env, ctx, url) {
     )
     .run();
 
-  // The response returns immediately; waitUntil keeps the isolate alive long
-  // enough for D1 to commit the row.
+  // waitUntil keeps the isolate alive for the D1 write.
   ctx.waitUntil(insert.catch((err) => console.error("hit insert failed", err)));
 
   return new Response(null, { status: 204, headers: { "cache-control": "no-store" } });
@@ -206,14 +204,12 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    // Eight days, so a weekly run cannot miss a row that lands on the edge of
-    // the window. A hit seen in the overlap may be reported twice.
+    // Eight days: a weekly run cannot miss edge rows; overlaps may double-report.
     const since = Date.now() - 8 * 24 * 60 * 60 * 1000;
     try {
       const count = Number(await env.DB.prepare(HUMAN_COUNT_SQL).bind(since).first("n")) || 0;
       const { results } = await env.DB.prepare(HUMAN_SQL).bind(since).all();
       console.log("hits cron", { since, count });
-      // Rolling retention keeps the table and its scan bounded.
       await env.DB.prepare(PRUNE_SQL).bind(Date.now() - RETENTION_MS).run();
       if (count) {
         await notify(env, `peerawatm.com: ${count} human hit(s)`, formatHits(results));

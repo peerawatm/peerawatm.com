@@ -1,18 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free live-reload preview server for ./public.
-
-Priorities, in order:
-
-* Never break midway - retry mid-write reads, swallow dropped connections and
-  transient filesystem errors, and stop cleanly on Ctrl-C / TERM / HUP.
-* Fast opening - listen and open the browser immediately, and keep HTTP/1.1
-  connections alive so assets share a warm socket.
-* Least resources - fingerprint changes with a cheap ``os.scandir`` pass (no
-  hashing) and reload the browser with a long-poll instead of fixed-interval
-  polling, so an idle preview costs almost nothing.
-
-Stdlib only. Configure with ``HOST``, ``PORT``, ``NO_OPEN``.
-"""
+"""Live-reload preview server for ./public. Stdlib only; HOST, PORT, NO_OPEN."""
 
 from __future__ import annotations
 
@@ -36,8 +23,8 @@ RETRYABLE = (
     ConnectionAbortedError,
     TimeoutError,
 )
-POLL = 0.4  # seconds between cheap change-detection scans
-LONGPOLL = 25.0  # seconds a reload request waits before replying "unchanged"
+POLL = 0.4  # seconds between scans
+LONGPOLL = 25.0  # seconds a reload waits
 
 _stop = threading.Event()
 _cond = threading.Condition()
@@ -94,7 +81,7 @@ def watcher() -> None:
 
 
 class Handler(SimpleHTTPRequestHandler):
-    protocol_version = "HTTP/1.1"  # keep-alive: warm sockets for assets + long-poll
+    protocol_version = "HTTP/1.1"  # keep-alive for assets and long-poll
     timeout = 65  # reap idle kept-alive connections
 
     def __init__(self, *args, **kwargs):

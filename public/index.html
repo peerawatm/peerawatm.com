@@ -53,7 +53,7 @@
   --frame:3px; --radius:1rem;
   --space-1:.25rem; --space-2:.5rem; --space-3:1rem; --space-4:1.5rem;
   --space-5:2rem; --space-6:3rem; --space-8:4rem;
-  --card-w:min(100%,20rem);                              /* featured card and social row share one width */
+  --card-w:min(100%,32rem);                              /* hero width; full-bleed on phones */
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
@@ -75,19 +75,17 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 header{
-  max-width:74rem;margin:0 auto;padding:var(--space-8) var(--space-4);text-align:left;
+  max-width:74rem;margin:0 auto;padding:var(--space-8) var(--space-4) 1.6rem;text-align:left;
 }
 h1{
   width:fit-content;margin:0 auto;
   font-size:clamp(2.5rem,9vw,5rem);font-weight:800;
   letter-spacing:-.02em;line-height:.8;                 /* lines overlap a little vertically */
-  white-space:nowrap;                                   /* each line is one word; never wrap */
+  white-space:nowrap;
 }
 h1>span{display:block}
 h1>span:last-child{padding-left:2.63em}                 /* measured (wght 800): "M" sits directly under the "w" of "Peerawat" */
-/* The capital M is an upside-down "w": the real M stays in the DOM (transparent) for
-   screen readers and SEO, and a vertically flipped, cap-height "w" is drawn over it.
-   translateY + scaleY are computed from the Nunito glyph boxes at wght 800. */
+/* The M is a flipped "w" drawn over the real, transparent M kept for a11y and SEO. */
 h1 .m{position:relative;display:inline-block;color:transparent}
 h1 .m::before{
   content:"w";position:absolute;left:0;top:0;color:var(--ink);
@@ -136,7 +134,6 @@ main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--s
 footer{max-width:74rem;margin:0 auto;padding:0 var(--space-4) var(--space-6);color:var(--ink);
   font-size:1.5rem;text-align:left}
 footer .socials{
-  /* Row matches the featured card; leftover space becomes gap automatically. */
   --soc-gap:var(--space-2);
   display:flex;justify-content:space-between;align-items:center;gap:var(--soc-gap);
   width:var(--card-w);margin:0 auto var(--space-6);
@@ -144,20 +141,24 @@ footer .socials{
 footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:1 1 0;min-width:0;max-width:3.6rem}
 footer .soc svg{
   width:100%;height:auto;aspect-ratio:1/1;display:block;
-  transition:transform .75s ease-out;                       /* out: 2.5x the in */
+  transition:transform .75s ease-out;
 }
 footer .soc:hover svg{transition-duration:.30s;
-  transition-timing-function:cubic-bezier(.34,1.2,.55,1)}   /* in: punchy */
+  transition-timing-function:cubic-bezier(.34,1.2,.55,1)}
 footer .copy{font-size:.972em;line-height:1;vertical-align:.01em}
 footer .name{font-weight:700}
 footer .name a{color:inherit;text-decoration:none}
 footer .name a:hover{text-decoration:underline}
 footer .base{
-  /* One row at every width: copyright left, theme control pinned right. */
   display:flex;justify-content:space-between;align-items:center;
   gap:var(--space-2);flex-wrap:nowrap;
 }
 footer .theme{flex:0 0 auto;margin-left:auto}
+@media (min-width:37.5rem){
+  footer .socials{width:auto;justify-content:center;gap:var(--space-4)}
+  footer .soc{max-width:2rem}
+  .work-title{font-size:2rem}
+}
 </style>
 <noscript><style>#theme-toggle{display:none}</style></noscript>
 </head>
@@ -216,9 +217,7 @@ function unitVector(e, el){
   return [dx, dy];
 }
 
-// Recenter each brand mark inside its square 1:1 frame: tighten the viewBox
-// to the glyph's own bounds so the mark sits optically centered. The frame
-// itself is square (CSS), so glyphs keep their natural aspect ratio inside it.
+// Tighten each viewBox to the glyph's bounds so the mark sits optically centred.
 document.querySelectorAll(".soc svg").forEach((s) => {
   try {
     const b = s.getBBox();
@@ -229,9 +228,9 @@ document.querySelectorAll(".soc svg").forEach((s) => {
   } catch (e) {}
 });
 
-// Lean each social glyph toward the cursor using a clamped pointer vector.
-const LEAN = 4;        // px, max travel at the icon edge
-const LEAN_CURVE = 2.2; // higher = calmer near the centre (ease-in response)
+// Lean each social glyph toward the cursor.
+const LEAN = 4;        // px, max travel
+const LEAN_CURVE = 2.2; // higher = calmer near the centre
 const leanResp = (v) => Math.sign(v) * Math.pow(Math.abs(v), LEAN_CURVE);
 let reduceMotion = false;
 try{ reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
