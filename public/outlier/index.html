@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Outlier</title>
+<meta name="theme-color" content="#ffffff" id="theme-color">
+<script>
+(function(){
+  var saved = null;
+  try{ saved = localStorage.getItem("theme"); }catch(e){}
+  var explicit = saved === "dark" || saved === "light" ? saved : null;
+  var dark = explicit === "dark";
+  if (!explicit){
+    try{ dark = window.matchMedia("(prefers-color-scheme: dark)").matches; }catch(e){}
+  }
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  var meta = document.getElementById("theme-color");
+  if (meta) meta.content = dark ? "#000000" : "#ffffff";
+})();
+</script>
+<style>
+@font-face{font-family:Nunito;font-style:normal;font-weight:200 1000;font-display:swap;src:url("/fonts/nunito-var.woff2") format("woff2")}
+:root{color-scheme:light;--bg:#fff;--ink:#000;--muted:#595959;--panel:#e5e5e5;--line:#d6d6d6;--cover:#e5e5e5;--radius:1.25rem;--frame:3px}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--panel:#292929;--line:#3d3d3d;--cover:#292929}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#000;--ink:#fff;--muted:#aaa;--panel:#292929;--line:#3d3d3d;--cover:#292929}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:1.5rem}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,ui-rounded,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:.2em}
+a:focus-visible,.theme-toggle:focus-visible{outline:3px solid currentColor;outline-offset:4px;border-radius:.25rem}
+.site-header{width:min(100% - 3rem,68rem);margin:0 auto;padding:1.5rem 0;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;border-bottom:1px solid var(--line)}
+.home-link{font-size:1.05rem;font-weight:700}
+.theme-toggle{font:inherit;color:var(--ink);background:transparent;line-height:0;border:0;padding:0;width:2.5rem;aspect-ratio:1;cursor:pointer;border-radius:.7rem;display:grid;place-items:center;transition:background .375s ease-out,color .375s ease-out,box-shadow .375s ease-out}
+.theme-toggle:hover{box-shadow:inset 0 0 0 var(--frame) var(--ink);transition-duration:.15s}
+.theme-toggle svg{grid-area:1/1;width:1.5rem;height:1.5rem;display:block;transform-origin:center;transition:opacity .25s ease,transform .5s cubic-bezier(.2,.8,.2,1)}
+.theme-toggle .sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-toggle .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
+:root[data-theme="dark"] .theme-toggle .sun{opacity:0;transform:rotate(90deg) scale(.6)}
+:root[data-theme="dark"] .theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
+main{width:min(100% - 3rem,68rem);margin:0 auto;padding:clamp(2.5rem,7vw,5rem) 0 6rem}
+.hero{display:grid;grid-template-columns:minmax(14rem,.78fr) minmax(0,1.22fr);align-items:center;gap:clamp(2rem,7vw,6rem)}
+.cover-art{aspect-ratio:3/4;overflow:hidden;margin:0;border:1px solid var(--line);border-radius:var(--radius);background:var(--cover)}
+.cover-art img{display:block;width:100%;height:100%;object-fit:cover}
+.series-copy{min-width:0;align-self:stretch}
+h1{margin:0;font-size:clamp(2.75rem,7vw,5rem);font-weight:700;letter-spacing:-.04em;line-height:.95}
+.content-section{margin-top:clamp(3.5rem,7vw,5.5rem);padding-top:1.5rem;border-top:1px solid var(--line)}
+h2{margin:0;font-size:clamp(1.75rem,4vw,2.3rem);font-weight:700;letter-spacing:-.04em}
+.site-footer{width:min(100% - 3rem,68rem);margin:0 auto;padding:1.5rem 0 2.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+@media(max-width:44rem){
+  .hero{grid-template-columns:1fr;gap:2rem}
+  .cover-art{width:min(100%,19rem);justify-self:center}
+}
+@media(max-width:27rem){.site-header,main,.site-footer{width:calc(100% - 2rem)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.theme-toggle svg{transition:none}}
+</style>
+<noscript><style>#theme-toggle{display:none}</style></noscript>
+</head>
+<body>
+<header class="site-header">
+  <a class="home-link" href="/">← Peerawat Monviset</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" title="Switch to dark theme">
+    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 2.1v2.4M12 19.5v2.4M2.1 12h2.4M19.5 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M5.2 18.8l1.7-1.7M17.1 6.9l1.7-1.7"/></g></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg>
+  </button>
+</header>
+<main>
+  <section class="hero" aria-labelledby="series-title">
+    <figure class="cover-art" aria-hidden="true">
+      <img src="/outlier/cover.png" alt="">
+    </figure>
+    <div class="series-copy">
+      <h1 id="series-title">Outlier</h1>
+    </div>
+  </section>
+  <section class="content-section" aria-labelledby="chapters-title">
+    <h2 id="chapters-title">Chapters</h2>
+  </section>
+</main>
+<footer class="site-footer">© Peerawat Monviset · All rights reserved.</footer>
+<script>
+(function(){
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
+  const meta = document.getElementById("theme-color");
+  let media = null;
+  try{ media = window.matchMedia("(prefers-color-scheme: dark)"); }catch(e){}
+  let explicit = null;
+  try{
+    const saved = localStorage.getItem("theme");
+    explicit = saved === "dark" || saved === "light" ? saved : null;
+  }catch(e){}
+
+  function systemTheme(){
+    return media && media.matches ? "dark" : "light";
+  }
+
+  function applyTheme(theme, persist){
+    const dark = theme === "dark";
+    root.dataset.theme = dark ? "dark" : "light";
+    if (meta) meta.content = dark ? "#000000" : "#ffffff";
+    if (toggle){
+      const label = dark ? "Switch to light theme" : "Switch to dark theme";
+      toggle.setAttribute("aria-label", label);
+      toggle.title = label;
+    }
+    if (persist){
+      try{ localStorage.setItem("theme", dark ? "dark" : "light"); }catch(e){}
+    }
+  }
+
+  applyTheme(explicit || systemTheme(), false);
+
+  if (toggle){
+    toggle.addEventListener("click", function(){
+      explicit = root.dataset.theme === "dark" ? "light" : "dark";
+      applyTheme(explicit, true);
+    });
+  }
+
+  if (media){
+    const onSystem = function(e){
+      if (!explicit) applyTheme(e.matches ? "dark" : "light", false);
+    };
+    if (media.addEventListener) media.addEventListener("change", onSystem);
+    else if (media.addListener) media.addListener(onSystem);
+  }
+
+  window.addEventListener("storage", function(e){
+    if (e.key !== "theme" && e.key !== null) return;
+    explicit = e.newValue === "dark" || e.newValue === "light" ? e.newValue : null;
+    applyTheme(explicit || systemTheme(), false);
+  });
+})();
+</script>
+</body>
+</html>
