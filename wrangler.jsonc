@@ -11,6 +11,9 @@
   "observability": {
     "enabled": true
   },
+  "triggers": {
+    "crons": ["0 2 * * 1"]
+  },
   "d1_databases": [
     {
       "binding": "DB",
