@@ -1,6 +1,5 @@
 (function () {
   const root = document.documentElement;
-  const toggle = document.getElementById("theme-toggle");
   const meta = document.getElementById("theme-color");
   let media = null;
   try { media = window.matchMedia("(prefers-color-scheme: dark)"); } catch (e) {}
@@ -17,7 +16,9 @@
   function applyTheme(theme, persist) {
     const dark = theme === "dark";
     root.dataset.theme = dark ? "dark" : "light";
+    root.classList.add("js");
     if (meta) meta.content = dark ? "#000000" : "#ffffff";
+    const toggle = document.getElementById("theme-toggle");
     if (toggle) {
       const label = dark ? "Switch to light theme" : "Switch to dark theme";
       toggle.setAttribute("aria-label", label);
@@ -28,14 +29,20 @@
     }
   }
 
-  applyTheme(explicit || systemTheme(), false);
-
-  if (toggle) {
+  function bindToggle() {
+    const toggle = document.getElementById("theme-toggle");
+    if (!toggle) return;
+    applyTheme(root.dataset.theme, false);
     toggle.addEventListener("click", function () {
       explicit = root.dataset.theme === "dark" ? "light" : "dark";
       applyTheme(explicit, true);
     });
   }
+
+  applyTheme(explicit || systemTheme(), false);
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindToggle);
+  else bindToggle();
 
   if (media) {
     const onSystem = function (e) {

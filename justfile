@@ -17,11 +17,74 @@ dev:
 		open http://localhost:8787
 	) &
 	{{wrangler}} dev --port 8787 --test-scheduled --live-reload
-check:
+check: style
 	node --check src/index.js
 	node --check public/theme.js
-	node --test src/
+	node --test "src/**/*.test.js"
 	sqlite3 :memory: < migrations/0001_hits.sql
+style:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	node --input-type=module -e '
+	import fs from "node:fs";
+
+	const css = fs.readFileSync("public/theme.css", "utf8");
+	const pages = ["public/index.html", "public/outlier/index.html"];
+
+	function block(re) {
+	  const start = css.search(re);
+	  if (start < 0) throw new Error("missing block: " + re);
+	  const open = css.indexOf("{", start);
+	  let depth = 0;
+	  for (let i = open; i < css.length; i++) {
+	    if (css[i] === "{") depth++;
+	    else if (css[i] === "}" && --depth === 0) return css.slice(open + 1, i);
+	  }
+	  throw new Error("unterminated block: " + re);
+	}
+
+	const names = (text) => [...text.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]);
+	const light = names(block(/\/\* tokens: light \*\//));
+	const dark = names(block(/\/\* tokens: dark \*\//));
+	const fallback = names(block(/\/\* tokens: system fallback \*\//));
+	const sorted = (list) => list.slice().sort().join(" ");
+
+	if (sorted(dark) !== sorted(fallback)) throw new Error("dark and system-fallback tokens diverged");
+	for (const name of dark) if (!light.includes(name)) throw new Error(name + " missing from light tokens");
+
+	const all = names(css);
+	for (const name of new Set(all)) {
+	  const count = all.filter((n) => n === name).length;
+	  const expected = dark.includes(name) ? 3 : 1;
+	  if (count !== expected) throw new Error(name + " defined " + count + " times, expected " + expected);
+	}
+
+	const rules = [];
+	const stack = [];
+	let buffer = "";
+	for (const ch of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
+	  if (ch === "{") { stack.push(buffer.trim()); buffer = ""; }
+	  else if (ch === "}") {
+	    const prelude = stack.pop();
+	    if (!prelude.startsWith("@")) rules.push(stack.join(" ") + " >> " + prelude);
+	    buffer = "";
+	  } else buffer += ch;
+	}
+	const seen = new Set();
+	for (const rule of rules) {
+	  if (seen.has(rule)) throw new Error("rule declared twice: " + rule);
+	  seen.add(rule);
+	}
+
+	for (const page of pages) {
+	  const html = fs.readFileSync(page, "utf8");
+	  if (/<style[\s>]/i.test(html)) throw new Error("inline <style> in " + page);
+	  const sheets = [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => m[1]);
+	  if (sheets.length !== 1 || sheets[0] !== "/theme.css") throw new Error(page + " must link only /theme.css, got " + sheets.join(","));
+	}
+
+	console.log("style: " + new Set(all).size + " tokens across 3 states, 0 inline styles, 1 stylesheet");
+	'
 db-migrate:
 	{{wrangler}} d1 migrations apply peerawatm-hits --remote
 deploy: check
