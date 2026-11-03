@@ -47,6 +47,7 @@
   --frame:3px; --radius:1rem;
   --space-1:.25rem; --space-2:.5rem; --space-3:1rem; --space-4:1.5rem;
   --space-5:2rem; --space-6:3rem; --space-8:4rem;
+  --card-w:min(100%,20rem);                              /* featured card and social row share one width */
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
@@ -76,14 +77,8 @@ h1{
   letter-spacing:-.02em;line-height:.8;                 /* lines overlap a little vertically */
   white-space:nowrap;                                   /* each line is one word; never wrap */
 }
-h1>span{display:block;position:relative}
+h1>span{display:block}
 h1>span:last-child{padding-left:2.63em}                 /* measured (wght 800): "M" sits directly under the "w" of "Peerawat" */
-.name-tip-wrap{position:static;display:inline-block}
-.name-trigger{appearance:none;padding:0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit;text-align:inherit;cursor:help}
-.name-trigger:focus-visible{outline:3px solid var(--accent);outline-offset:.12em;border-radius:.08em}
-.name-tip{position:absolute;z-index:5;left:.3rem;top:150%;width:max-content;max-width:min(88vw,22rem);padding:0;border:0;border-radius:0;background:transparent;color:var(--ink);font-size:clamp(.8rem,2.5vw,.95rem);font-weight:700;letter-spacing:normal;line-height:1.35;text-align:center;white-space:normal;opacity:0;visibility:hidden;transform:translateY(-50%);transition:opacity .16s ease,visibility .16s ease}
-.name-tip-wrap--last .name-tip{top:-50%;right:0;bottom:auto;left:auto;transform:translateY(-50%)}
-.name-tip-wrap:not(.is-dismissed):hover .name-tip,.name-tip-wrap:not(.is-dismissed):focus-within .name-tip,.name-tip-wrap.is-open .name-tip{opacity:1;visibility:visible}
 /* The capital M is an upside-down "w": the real M stays in the DOM (transparent) for
    screen readers and SEO, and a vertically flipped, cap-height "w" is drawn over it.
    translateY + scaleY are computed from the Nunito glyph boxes at wght 800. */
@@ -97,7 +92,6 @@ h1 .m::before{
   header{padding-top:2.5rem;padding-bottom:2rem}
   h1{font-size:min(5rem,calc((100vw - 3rem)/7.5))}
   main{padding-top:1.5rem}
-  footer .socials{--soc-gap:clamp(1.25rem,5vw,1.75rem);margin-bottom:var(--space-8)}
 }
 .theme{display:inline-flex;gap:.4rem;align-items:center}
 .theme button{
@@ -115,11 +109,11 @@ h1 .m::before{
 #theme-toggle .moon{opacity:0;transform:rotate(-90deg) scale(.6)}
 :root[data-theme="dark"] #theme-toggle .sun{opacity:0;transform:rotate(90deg) scale(.6)}
 :root[data-theme="dark"] #theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
-@media (prefers-reduced-motion: reduce){#theme-toggle svg,.name-tip{transition:none}}
+@media (prefers-reduced-motion: reduce){#theme-toggle svg{transition:none}}
 main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--space-8)}
 .works-heading{text-align:center;margin:0 0 var(--space-4);font-size:clamp(1.75rem,4vw,2rem);font-weight:800}
 .works-grid{display:flex;justify-content:center}
-.work-card{display:block;width:min(100%,20rem);color:inherit;text-align:center;text-decoration:none}
+.work-card{display:block;width:var(--card-w);color:inherit;text-align:center;text-decoration:none}
 .work-placeholder{display:block;aspect-ratio:3/4;overflow:hidden;border-radius:var(--radius);background:var(--placeholder);transition:transform .3s ease}
 .work-placeholder img{display:block;width:100%;height:100%;object-fit:cover}
 .work-card:hover .work-placeholder{transform:translateY(-3px)}
@@ -130,14 +124,15 @@ main{max-width:74rem;margin:0 auto;padding:var(--space-5) var(--space-4) var(--s
 footer{max-width:74rem;margin:0 auto;padding:0 var(--space-4) var(--space-6);color:var(--ink);
   font-size:1.5rem;text-align:left}
 footer .socials{
-  /* Four icon frames and their three gaps fit the footer content width. */
-  --soc-gap:clamp(.75rem,2.4vw,3.125rem);
-  --soc-size:min(3.6rem,calc((100vw - 3rem - 3 * var(--soc-gap)) / 4));
-  display:flex;justify-content:center;align-items:center;gap:var(--soc-gap);margin-bottom:var(--space-6);
+  /* Row matches the featured card; leftover space becomes gap automatically. */
+  --soc-gap:var(--space-2);
+  --soc-size:min(3.6rem,calc((100% - 3 * var(--soc-gap)) / 4));
+  display:flex;justify-content:space-between;align-items:center;gap:var(--soc-gap);
+  width:var(--card-w);margin:0 auto var(--space-6);
 }
-footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:0 0 auto}
+footer .soc{color:inherit;text-decoration:none;display:inline-flex;flex:0 0 auto;width:var(--soc-size)}
 footer .soc svg{
-  width:var(--soc-size);height:var(--soc-size);aspect-ratio:1/1;display:block;
+  width:100%;height:auto;aspect-ratio:1/1;display:block;
   transition:transform .75s ease-out;                       /* out: 2.5x the in */
 }
 footer .soc:hover svg{transition-duration:.30s;
@@ -146,21 +141,20 @@ footer .copy{font-size:.972em;line-height:1;vertical-align:.01em}
 footer .name{font-weight:700}
 footer .name a{color:inherit;text-decoration:none}
 footer .name a:hover{text-decoration:underline}
-footer .base{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-/* Narrow: stack, with the theme control above the copyright so the legal line stays last.
-   Applies below the wrap point (name + buttons need ~437px). */
-@media (max-width:27.5rem){
-  footer .base{flex-direction:column;align-items:flex-start}
-  footer .theme{order:-1}
+footer .base{
+  /* One row at every width: copyright left, theme control pinned right. */
+  display:flex;justify-content:space-between;align-items:center;
+  gap:var(--space-2);flex-wrap:nowrap;
 }
+footer .theme{flex:0 0 auto;margin-left:auto}
 </style>
 <noscript><style>#theme-toggle{display:none}</style></noscript>
 </head>
 <body>
 <header>
   <h1>
-    <span><span class="name-tip-wrap"><button type="button" class="name-trigger" aria-describedby="pronunciation-peerawat">Peerawat</button><span class="name-tip" id="pronunciation-peerawat" role="tooltip">Pee-ra-wat · <span lang="th">พีระวัฒน์</span></span></span></span>
-    <span><span class="name-tip-wrap name-tip-wrap--last"><button type="button" class="name-trigger" aria-describedby="pronunciation-monviset"><span class="m">M</span>onviset</button><span class="name-tip" id="pronunciation-monviset" role="tooltip">Mon-wi-set · <span lang="th">มนต์วิเศษ</span></span></span></span>
+    <span>Peerawat</span>
+    <span><span class="m">M</span>onviset</span>
   </h1>
 </header>
 
@@ -209,40 +203,6 @@ function unitVector(e, el){
   if (len > 1) { dx /= len; dy /= len; }
   return [dx, dy];
 }
-
-(function(){
-  const entries = Array.from(document.querySelectorAll(".name-tip-wrap"));
-  const setState = (entry, open, dismissed) => {
-    entry.classList.toggle("is-open", open);
-    entry.classList.toggle("is-dismissed", dismissed);
-  };
-  entries.forEach((entry) => {
-    const trigger = entry.querySelector(".name-trigger");
-    trigger.addEventListener("click", () => {
-      const open = !entry.classList.contains("is-open");
-      entries.forEach((item) => setState(item, false, false));
-      setState(entry, open, !open);
-    });
-    trigger.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape") return;
-      setState(entry, false, true);
-      event.preventDefault();
-    });
-    trigger.addEventListener("blur", () => {
-      if (entry.classList.contains("is-open")) setState(entry, false, false);
-      if (!entry.matches(":hover")) entry.classList.remove("is-dismissed");
-    });
-    entry.addEventListener("pointerleave", () => {
-      if (!entry.contains(document.activeElement)) setState(entry, false, false);
-    });
-  });
-  document.addEventListener("pointerdown", (event) => {
-    entries.forEach((entry) => {
-      if (entry.contains(event.target) || !entry.classList.contains("is-open")) return;
-      setState(entry, false, entry.contains(document.activeElement));
-    });
-  });
-})();
 
 (function(){
   const root = document.documentElement;
