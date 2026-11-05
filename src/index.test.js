@@ -39,7 +39,7 @@ test("flags automation and short dwells", () => {
 });
 
 test("readJson parses within the cap", async () => {
-  const request = new Request("https://www.peerawatm.com/hit", {
+  const request = new Request("https://peerawatm.com/hit", {
     method: "POST",
     body: JSON.stringify(hit),
   });
@@ -47,7 +47,7 @@ test("readJson parses within the cap", async () => {
 });
 
 test("readJson rejects an oversized body", async () => {
-  const request = new Request("https://www.peerawatm.com/hit", {
+  const request = new Request("https://peerawatm.com/hit", {
     method: "POST",
     body: "x".repeat(4096),
   });
@@ -55,7 +55,7 @@ test("readJson rejects an oversized body", async () => {
 });
 
 test("readJson returns null for invalid JSON", async () => {
-  const request = new Request("https://www.peerawatm.com/hit", {
+  const request = new Request("https://peerawatm.com/hit", {
     method: "POST",
     body: "{",
   });
@@ -68,7 +68,7 @@ test("readJson returns null when the body stream fails", async () => {
       controller.error(new Error("boom"));
     },
   });
-  const request = new Request("https://www.peerawatm.com/hit", {
+  const request = new Request("https://peerawatm.com/hit", {
     method: "POST",
     body,
     duplex: "half",
@@ -94,19 +94,9 @@ const env = {
 };
 const ctx = { waitUntil() {} };
 
-test("www redirects to the apex host", async () => {
-  const res = await worker.fetch(
-    new Request("https://www.peerawatm.com/th/?x=1"),
-    env,
-    ctx
-  );
-  assert.equal(res.status, 301);
-  assert.equal(res.headers.get("location"), "https://peerawatm.com/th/?x=1");
-});
-
 test("/hit rejects non-POST with Allow", async () => {
   const res = await worker.fetch(
-    new Request("https://www.peerawatm.com/hit"),
+    new Request("https://peerawatm.com/hit"),
     env,
     ctx
   );
@@ -116,7 +106,7 @@ test("/hit rejects non-POST with Allow", async () => {
 
 test("/hit rejects a non-beacon fetch mode", async () => {
   const res = await worker.fetch(
-    new Request("https://www.peerawatm.com/hit", {
+    new Request("https://peerawatm.com/hit", {
       method: "POST",
       headers: { "sec-fetch-mode": "script" },
       body: "{}",
@@ -129,7 +119,7 @@ test("/hit rejects a non-beacon fetch mode", async () => {
 
 test("/hit rejects an oversized body", async () => {
   const res = await worker.fetch(
-    new Request("https://www.peerawatm.com/hit", {
+    new Request("https://peerawatm.com/hit", {
       method: "POST",
       headers: { "sec-fetch-mode": "no-cors" },
       body: "x".repeat(4096),
@@ -142,7 +132,7 @@ test("/hit rejects an oversized body", async () => {
 
 test("/hit accepts malformed JSON without inserting", async () => {
   const res = await worker.fetch(
-    new Request("https://www.peerawatm.com/hit", {
+    new Request("https://peerawatm.com/hit", {
       method: "POST",
       headers: { "sec-fetch-mode": "no-cors" },
       body: "{",

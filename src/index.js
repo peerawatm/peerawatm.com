@@ -1,6 +1,5 @@
 const ALLOWED_HOSTS = new Set([
   "peerawatm.com",
-  "www.peerawatm.com",
   // `wrangler dev` serves the Worker from here.
   "localhost",
   "127.0.0.1",
@@ -190,12 +189,6 @@ export default {
 
     if (!isAllowedHost(url.hostname)) {
       return new Response("Not found", { status: 404 });
-    }
-
-    // Keep /hit on www so beacons from cached pages still record.
-    if (url.hostname === "www.peerawatm.com" && url.pathname !== "/hit") {
-      url.hostname = "peerawatm.com";
-      return Response.redirect(url.toString(), 301);
     }
 
     if (PROBE_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) {
