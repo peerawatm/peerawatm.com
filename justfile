@@ -126,6 +126,6 @@ doctor:
 dash:
 	open "https://dash.cloudflare.com"
 open:
-	open "https://www.peerawatm.com"
+	open "https://peerawatm.com"
 gh:
 	open "https://github.com/peerawatm/peerawatm.com"

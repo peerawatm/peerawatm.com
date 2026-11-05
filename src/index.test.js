@@ -94,6 +94,16 @@ const env = {
 };
 const ctx = { waitUntil() {} };
 
+test("www redirects to the apex host", async () => {
+  const res = await worker.fetch(
+    new Request("https://www.peerawatm.com/th/?x=1"),
+    env,
+    ctx
+  );
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.get("location"), "https://peerawatm.com/th/?x=1");
+});
+
 test("/hit rejects non-POST with Allow", async () => {
   const res = await worker.fetch(
     new Request("https://www.peerawatm.com/hit"),

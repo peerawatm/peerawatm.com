@@ -192,6 +192,12 @@ export default {
       return new Response("Not found", { status: 404 });
     }
 
+    // Keep /hit on www so beacons from cached pages still record.
+    if (url.hostname === "www.peerawatm.com" && url.pathname !== "/hit") {
+      url.hostname = "peerawatm.com";
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (PROBE_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))) {
       return new Response("Not found", { status: 404 });
     }
